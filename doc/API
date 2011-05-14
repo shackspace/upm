@@ -1,0 +1,24 @@
+
+DO WANT:
+- POST /cart/543535/add /part/42 1000
+- DELETE /cart/543535/part/42
+- GET /cart/543535 # incl. all round price
+- GET /parts # all the parts
+- GET /search/parts?fulltext={query}
+- POST /cart/543535/stash ====> ttl # parts in carts are reserved
+- PUT /part/42/threshold 2
+- POST /part/42/add 200
+
+- POST /cart/543535/save /template/shackuino
+- POST /template/shackuino ====> /cart/45345 # automagic ttl-based reserved 
+- GET /templates
+- GET /search/templates?fulltext={query}
+
+- POST /cart ====> /cart/543535 ttl # create new cart
+
+- POST /cart/543535/checkout
+
+- DELETE /cart/543535
+
+_every_ request gets logged with timestamp for later visualization & more aids.
+
