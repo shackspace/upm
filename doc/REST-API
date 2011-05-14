@@ -5,13 +5,19 @@ property ∈ { price, amount, ... }
 
 ## create new part [by providing a complete document]
 
-POST /parts
+POST /v/parts
+
+====> /v/parts/{id}
 
 ## { create, retrieve, update, delete } { part, part property }
 
-{VERB} /parts/{id}
+{VERB} /v/parts/{id}
 
-{VERB} /parts/{id}/{property-name}
+====> part [object, e.g. JSON]
+
+{VERB} /v/parts/{id}/properties/{property-name}
+
+====> property value [value, e.g. JSON value]
 
 with
   {property-name} ∈ { price, location, ... }
@@ -22,7 +28,15 @@ where
   PUT = { create, update} part [property]
   DELETE = delete part [property]
 
+Note: POST /v/parts is similar PUT /v/parts/{new-id}
+
 ## search parts
 
-GET /search?fulltext={query}
+GET /v/methods/search?fulltext={query}
+
+====> ...
+
+## 
+
+POST /v/parts/{id}/properties/{property-name}/methods/{method-name}
 
