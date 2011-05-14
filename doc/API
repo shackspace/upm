@@ -1,0 +1,28 @@
+
+part ::= id, property*
+
+property ∈ { price, amount, ... }
+
+## create new part [by providing a complete document]
+
+POST /parts
+
+## { create, retrieve, update, delete } { part, part property }
+
+{VERB} /parts/{id}
+
+{VERB} /parts/{id}/{property-name}
+
+with
+  {property-name} ∈ { price, location, ... }
+  {VERB} ∈ { GET, PUT, DELETE }
+
+where
+  GET = retrieve part [property]
+  PUT = { create, update} part [property]
+  DELETE = delete part [property]
+
+## search parts
+
+GET /search?fulltext={query}
+
