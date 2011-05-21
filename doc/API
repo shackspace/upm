@@ -1,18 +1,22 @@
 
 DO WANT:
-- POST /cart/543535/add /part/42 1000
-- DELETE /cart/543535/part/42
-- GET /cart/543535 # incl. all round price
-- GET /parts # all the parts
-- GET /search/parts?fulltext={query}
-- POST /cart/543535/stash ====> ttl # parts in carts are reserved
-- PUT /part/42/threshold 2
-- POST /part/42/add 200
 
-- POST /cart/543535/save /template/shackuino
-- POST /template/shackuino ====> /cart/45345 # automagic ttl-based reserved 
-- GET /templates
-- GET /search/templates?fulltext={query}
+# Add 1000 parts to a cart (create / update)
+- PUT /cart/543535/part/42
+  1000
+  ====> 200
+  ====> 404
+  ====> 409 -- there are not enough parts in the DB
+
+# Delete a part from a cart
+- DELETE /cart/543535/part/42
+  ====> 200
+  ====> 404
+
+# List all the cart
+- GET /cart/543535
+  ====> 200, parts + amounts
+  ====> 404
 
 - POST /cart ====> /cart/543535 ttl # create new cart
 
@@ -20,5 +24,42 @@ DO WANT:
 
 - DELETE /cart/543535
 
-_every_ request gets logged with timestamp for later visualization & more aids.
+
+# List all the parts
+- GET /parts
+  ====> 200, parts by value
+  ====> 404
+
+# Create or Update the threshold, when part should be re-ordered
+- PUT /part/42/threshold
+  2
+  ====> 200
+  ====> 404 -- part does not exist
+
+# Create or Update amount to 666
+- PUT /part/42/amount
+  666
+  ====> 200
+  ====> 404 -- part does not exist
+
+# Retrieve amount of a part
+- GET /part/42/amount
+  ====> 200, 666
+  ====> 404
+
+# Fulltext search for parts
+- GET /search/parts?fulltext={query}
+  ====> 200, search results (parts by value)
+
+- GET /search/templates?fulltext={query}
+
+- POST /template/shackuino ====> /cart/45345 # automagic ttl-based reserved 
+- GET /templates
+
+# Create or Update a template from a cart
+- PUT /template/shackuino
+  /cart/543535
+
+
+_every_ request gets logged with timestamp for lter visualization & more aids.
 
