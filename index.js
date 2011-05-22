@@ -4,6 +4,8 @@
  *
  */
 
+var CONTROLLER_DIR = __dirname + '/controller';
+
 var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
@@ -44,10 +46,10 @@ var server = Connect.createServer(
 );
 
 (function initModules() {
-    Fs.readdirSync(__dirname + '/lib').forEach(function (file) {
+    Fs.readdirSync(CONTROLLER_DIR).forEach(function (file) {
         if (/\.js$/.test(file)) {
           var name = file.split('\.')[0];
-          var module = require('./lib/' + name);
+          var module = require(CONTROLLER_DIR + '/' + name);
           Object.keys(module).forEach(function (route) {
               server.use('/' + route, module[route]({ log: log }));
             });
