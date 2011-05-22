@@ -15,7 +15,7 @@ errorlog.setLevel('ERROR');
 log4js.addAppender(log4js.fileAppender(__dirname + '/log/upm.log'));
 log4js.addAppender(log4js.fileAppender(__dirname + '/log/error.log'), errorlog);
 
-var log = log4js.getLogger('reboard');
+var log = log4js.getLogger('upm');
 log.setLevel('DEBUG');
 
 /*
@@ -42,7 +42,7 @@ var server = Connect.createServer(
           var name = file.split('\.')[0];
           var module = require('./lib/' + name);
           Object.keys(module).forEach(function (route) {
-              server.use('/' + route, module[route]());
+              server.use('/' + route, module[route]({ log: log }));
             });
         }   
       }); 

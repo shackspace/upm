@@ -4,6 +4,7 @@
   "author" : "Ministry of Cancer",
   "dependencies": {
     "connect": "= 1.4.1",
+    "quip": "= 0.0.2",
     "log4js": "= 0.2.5"
   },
   "engines" : { "node": ">= 0.4.0" }
