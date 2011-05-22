@@ -39,9 +39,17 @@ var server = Connect.createServer(
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
 
-server.use('/cart', Cart.create());
-
-server.use('/parts', Parts.create());
+(function initModules() {
+    Fs.readdirSync('./lib').forEach(function (file) {
+        if (/\.js$/.test(file)) {
+          var name = file.split('\.')[0];
+          var module = require('./lib/' + name);
+          Object.keys(module).forEach(function (route) {
+              server.use('/' + route, module[route]());
+            });
+        }   
+      }); 
+  }());
 
 server.listen(31337, function () {
     log.info('UPM successfully listening on http://localhost:31337/');
