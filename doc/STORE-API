@@ -1,5 +1,17 @@
 
+
 store.getItem(key, callback);
 
-  with callback signature: function (err, item)
+  callback: function (err, item)
+
+
+store.putItem(key, value, [callback]);
+
+  callback: function (err)
+
+
+store.deleteItem(key, [callback]);
+
+  callback: function (err)
+
 
