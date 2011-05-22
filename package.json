@@ -3,9 +3,10 @@
   "version" : "4.2.3",
   "author" : "Ministry of Cancer",
   "dependencies": {
-    "connect": "= 1.4.1",
+    "connect": ">= 1.4.1",
     "qs": "= 0.1.0",
     "quip": "= 0.0.2",
+    "node-uuid": ">= 1.1.0",
     "log4js": "= 0.2.5"
   },
   "engines" : { "node": ">= 0.4.0" }
