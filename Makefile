@@ -1,10 +1,15 @@
+EXPRESSO = node_modules/expresso/bin/expresso
+TESTS= test/
+.PHONY: $(TESTS)
+all: start
 
-.PHONY: all
-all: select-target
+start:
+	node .
+pre-install:
+	npm install
 
-% : %.8
-	8l -o $@ $<
+bugs: test
+test: $(TESTS)
 
-%.8 : %.go
-	8g $<
-
+$(TESTS): 
+	$(EXPRESSO) $(.SOURCE)
