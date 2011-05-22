@@ -7,6 +7,9 @@
 var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
+
+var Parts = require('./lib/parts');
+
 var log4js = require('log4js')();
 var errorlog = log4js.getLogger('errorlog');
 
@@ -34,6 +37,8 @@ var server = Connect.createServer(
   Connect.logger({ stream: logStream }),
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
+
+server.use('/parts', Parts.create());
 
 server.listen(31337, function () {
     log.info('UPM successfully listening on http://localhost:31337/');
