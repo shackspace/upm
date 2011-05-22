@@ -105,6 +105,41 @@ exports['add new properties to part'] = function (beforeExit) {
       status: 200,
       body: /{"url":"\/part\/.*"}/,
       headers: headers
+    },
+    function (res) {
+      var partId = JSON.parse(res.body).url.replace('/part/', '');
+
+      Assert.response(part, {
+          method: 'PUT',
+          url: '/' + partId + '/newprop',
+          timeout: 500,
+          data: '{"value":"asdf1234"}',
+          headers: headers
+        }, {
+          status: 200,
+          headers: headers
+        });
+
+      Assert.response(part, {
+          url: '/' + partId + '/newprop',
+          timeout: 500
+        }, {
+          status: 200,
+          body: '{"value":"asdf1234"}',
+          headers: headers
+        });
+
+      Assert.response(part, {
+          url: '/' + partId,
+          timeout: 500
+        }, {
+          status: 200,
+          headers: headers
+        }, function (res) {
+          partData.newprop = 'asdf1234';
+          Assert.deepEqual(JSON.parse(res.body), partData);
+        });
+
     });
 
 };
