@@ -9,6 +9,7 @@ module.exports = function (log) {
 
   return function (req, res, next) {
     var data = {
+      method: req.method,
       url: req.url,
       headers: req.headers,
       body: req.rawBody
