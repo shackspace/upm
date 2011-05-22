@@ -8,6 +8,7 @@ var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
 
+var Cart = require('./lib/cart');
 var Parts = require('./lib/parts');
 
 var log4js = require('log4js')();
@@ -37,6 +38,8 @@ var server = Connect.createServer(
   Connect.logger({ stream: logStream }),
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
+
+server.use('/cart', Cart.create());
 
 server.use('/parts', Parts.create());
 
