@@ -8,9 +8,6 @@ var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
 
-var Cart = require('./lib/cart');
-var Parts = require('./lib/parts');
-
 var log4js = require('log4js')();
 var errorlog = log4js.getLogger('errorlog');
 
@@ -18,7 +15,7 @@ errorlog.setLevel('ERROR');
 log4js.addAppender(log4js.fileAppender(__dirname + '/log/upm.log'));
 log4js.addAppender(log4js.fileAppender(__dirname + '/log/error.log'), errorlog);
 
-var log = log4js.getLogger('reboard');
+var log = log4js.getLogger('upm');
 log.setLevel('DEBUG');
 
 /*
@@ -40,12 +37,12 @@ var server = Connect.createServer(
 );
 
 (function initModules() {
-    Fs.readdirSync('./lib').forEach(function (file) {
+    Fs.readdirSync(__dirname + '/lib').forEach(function (file) {
         if (/\.js$/.test(file)) {
           var name = file.split('\.')[0];
           var module = require('./lib/' + name);
           Object.keys(module).forEach(function (route) {
-              server.use('/' + route, module[route]());
+              server.use('/' + route, module[route]({ log: log }));
             });
         }   
       }); 

@@ -5,6 +5,7 @@
   "dependencies": {
     "connect": "= 1.4.1",
     "qs": "= 0.1.0",
+    "quip": "= 0.0.2",
     "log4js": "= 0.2.5"
   },
   "engines" : { "node": ">= 0.4.0" }
