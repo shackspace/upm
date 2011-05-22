@@ -40,7 +40,7 @@ var server = Connect.createServer(
 );
 
 (function initModules() {
-    Fs.readdirSync('./lib').forEach(function (file) {
+    Fs.readdirSync(__dirname + '/lib').forEach(function (file) {
         if (/\.js$/.test(file)) {
           var name = file.split('\.')[0];
           var module = require('./lib/' + name);
