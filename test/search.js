@@ -3,7 +3,7 @@
  */
 
 var Assert = require('assert');
-var Search = require('../lib/search');
+var Search = require('../controller/search');
 var search = Search.search({log : { debug : function () {} }});
 
 var headers = {

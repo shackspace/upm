@@ -3,7 +3,7 @@
  */
 
 var Assert = require('assert');
-var Part = require('../lib/part');
+var Part = require('../controller/part');
 var part = Part.part();
 var parts = Part.parts();
 
