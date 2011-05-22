@@ -1,0 +1,5 @@
+
+store.getItem(key, callback);
+
+  with callback signature: function (err, item)
+
