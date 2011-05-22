@@ -1,0 +1,17 @@
+
+
+store.getItem(key, callback);
+
+  callback: function (err, item)
+
+
+store.putItem(key, value, [callback]);
+
+  callback: function (err)
+
+
+store.deleteItem(key, [callback]);
+
+  callback: function (err)
+
+
