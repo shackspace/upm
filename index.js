@@ -7,6 +7,7 @@
 var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
+var RequestLogger = require('./middleware/requestlogger');
 
 var log4js = require('log4js')();
 var errorlog = log4js.getLogger('errorlog');
@@ -25,14 +26,20 @@ process.on('uncaughtException', function (err) {
     errorlog.error(err.stack);
   });
 
-var logStream = Fs.createWriteStream(__dirname + '/log/access.log', {
+var accessStream = Fs.createWriteStream(__dirname + '/log/access.log', {
     encoding: 'utf-8',
     flags: 'a'
   });
 
+var requestStream = Fs.createWriteStream(__dirname + '/log/requests.log', {
+    flags: 'a',
+    encoding: 'utf-8'
+  });
+
 var server = Connect.createServer(
   Connect.bodyParser(),
-  Connect.logger({ stream: logStream }),
+  RequestLogger({ log: log, logStream: requestStream }),
+  Connect.logger({ stream: accessStream }),
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
 
