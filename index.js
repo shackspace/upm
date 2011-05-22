@@ -8,9 +8,6 @@ var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
 
-var Cart = require('./lib/cart');
-var Parts = require('./lib/parts');
-
 var log4js = require('log4js')();
 var errorlog = log4js.getLogger('errorlog');
 
