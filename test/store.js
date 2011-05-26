@@ -91,22 +91,66 @@ exports['test all'] = function (beforeExit) {
           count += 1;
         }, function (err) {
           callbacks += 1;
-        });
 
-      db.all(function (err, data) {
-          callbacks += 1;
-          Assert.ok(data);
+          db.all(function (err, data) {
+              callbacks += 1;
+              Assert.ok(data);
 
-          Object.keys(data).forEach(function (key) {
-              var index = Number(key.replace('testNo', ''));
-              Assert.deepEqual(data[key], testData[index]);
+              Object.keys(data).forEach(function (key) {
+                  var index = Number(key.replace('testNo', ''));
+                  Assert.deepEqual(data[key], testData[index]);
+                });
+
+              db.quit();
             });
 
-          db.quit();
         });
+
     });
 
   beforeExit(function () {
       Assert.strictEqual(callbacks, 2);
     });
+};
+
+exports['test flush'] = function (beforeExit) {
+  var callbacks = 0;
+  var count = 0;
+  var db = Store.createStore({ name: 'test3db',  log: log });
+
+  Async.series([
+      function setTestValues(callback) {
+        Async.forEach(testData, function (entry, cb) {
+            db.put('testNo' + count, entry, cb); 
+            count += 1;
+          },
+          function finished(err) {
+            callbacks += 1;
+            callback();
+          });
+      },
+
+      function flushValues(callback) {
+        db.flush(callback);
+      },
+
+      function checkFlush(callback) {
+        db.all(function (err, data) {
+            callbacks += 1;
+            Assert.ok(data);
+            Assert.deepEqual(data, {});
+            callback();
+          });
+      }
+    ],
+
+    function closeDb(err) {
+      db.quit();
+    });
+
+
+  beforeExit(function () {
+      Assert.strictEqual(callbacks, 2);
+    });
+
 };
