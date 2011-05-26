@@ -27,22 +27,31 @@ var Connect = require('connect');
 var Quip = require('quip');
 var Uuid = require('node-uuid');
 
-var store = {};
+exports.parts = function (context) {
+  var store = context.store.parts;
 
-exports.parts = function (server) {
   return Connect(
     Quip(),
     Connect.router(function (app) {
 
         app.get('/', function (req, res) {
-            res.ok().json(store);
+            store.all(function (err, data) {
+                if (err) {
+                  res.error().json({ message: err.stack });
+                  return;
+                }
+
+                res.ok().json(data);
+              });
           });
 
       })
   );
 };
 
-exports.part = function (server) {
+exports.part = function (context) {
+  var store = context.store.parts;
+
   return Connect(
     Quip(),
     Connect.bodyParser(),
@@ -50,52 +59,68 @@ exports.part = function (server) {
 
         app.post('/', function (req, res) {
             var uuid = Uuid();
-            store[uuid] = req.body;
-            res.ok().json({ url: '/part/' + uuid });
+            store.put(uuid, req.body, function (err) {
+                if (err) {
+                  res.error().json({ message: err.stack });
+                  return;
+                }
+
+                res.ok().json({ url: '/part/' + uuid });
+              });
           });
 
         app.get('/:id', function (req, res) {
             var par = req.params;
-
-            if (store[par.id]) {
-              res.ok().json(store[par.id]);
-            } else {
-              res.notFound().json({
-                  message: 'No part with id ' + par.id + 'was found'
-                });
-            }
-
+            store.get(par.id, function (err, part) {
+                if (part) {
+                  res.ok().json(part);
+                } else {
+                  res.notFound().json({
+                      message: 'No part with id ' + par.id + 'was found'
+                    });
+                }
+              });
           });
 
         app.get('/:id/:property', function (req, res) {
             var par = req.params;
-
-            if (store[par.id]) {
-              if (store[par.id][par.property]) {
-                res.ok().json({ value: store[par.id][par.property] });
-              } else {
-                res.notFound().json({
-                    message: 'Part with id ' + par.id + ' has no attribute ' + par.property
-                  });
-              }
-            } else {
-              res.notFound().json({
-                  message: 'No part with id ' + par.id + 'was found'
-                });
-            }
+            var part = store.get(par.id, function (err, part) {
+                if (part) {
+                  if (part[par.property]) {
+                    res.ok().json({ value: part[par.property] });
+                  } else {
+                    res.notFound().json({
+                        message: 'Part with id ' + par.id + ' has no attribute ' + par.property
+                      });
+                  }
+                } else {
+                  res.notFound().json({
+                      message: 'No part with id ' + par.id + 'was found'
+                    });
+                }
+              });
           });
 
         app.put('/:id/:property', function (req, res) {
             var par = req.params;
+            var part = store.get(par.id, function (err, part) {
+                if (part) {
+                  part[par.property] = req.body.value;
+                  store.put(par.id, part, function (err) {
+                      if (err) {
+                        res.error().json({ message: err.stack });
+                        return;
+                      }
 
-            if (store[par.id]) {
-              store[par.id][par.property] = req.body.value;
-              res.ok().json({ message: 'ok' });
-            } else {
-              res.notFound().json({
-                  message: 'No part with id ' + par.id + 'was found'
-                });
-            }
+                      res.ok().json({ message: 'ok' });
+                    });
+                } else {
+                  res.notFound().json({
+                      message: 'No part with id ' + par.id + 'was found'
+                    });
+                }
+              });
+
           });
 
       })

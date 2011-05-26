@@ -3,9 +3,15 @@
  */
 
 var Assert = require('assert');
+var Store = require('../lib/store');
 var Part = require('../controller/part');
-var part = Part.part();
-var parts = Part.parts();
+var context = {
+  store: {
+    parts: Store.createStore({ name: 'parts' })
+  }
+};
+var part = Part.part(context);
+var parts = Part.parts(context);
 
 var headers = {
   'Content-Type': 'application/json'
