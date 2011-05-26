@@ -18,6 +18,7 @@ module.exports = function (context) {
 
   return function (req, res, next) {
     var data = {
+      date: new Date(),
       method: req.method,
       url: req.url,
       headers: req.headers,
