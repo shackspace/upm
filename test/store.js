@@ -4,6 +4,7 @@
 
 var Store = require('../lib/store');
 var Assert = require('assert');
+var Async = require('async');
 
 var testData = [
   { a: 23, b: 'foo', c: true },
@@ -21,43 +22,57 @@ var testData = [
   { a: 55, b: 'foo', c: true },
 ];
 
+var log = {
+  debug: console.log,
+  error: console.error
+};
+
 exports['test data storage'] = function (beforeExit) {
   var callbacks = 0;
-  var db = Store.createStore({ name: 'testdb' });
+  var db = Store.createStore({ name: 'testdb',  log: log });
+  db.flush(function () {
 
-  var t1 = { hello: 123, world: 'asaa' };
-  var t2 = { hello: 345, wooooo: 'asassas' };
+      var t1 = { hello: 123, world: 'asaa' };
+      var t2 = { hello: 345, wooooo: 'asassas' };
 
-  db.put('test1', t1, function () {
-      callbacks += 1;
-    });
+      db.put('test1', t1, function (err) {
+          callbacks += 1;
+          Assert.deepEqual(null, err);
+        });
 
-  db.put('test2', t2, function () {
-      callbacks += 1;
-    });
+      db.put('test2', t2, function (err) {
+          callbacks += 1;
+          Assert.deepEqual(null, err);
+        });
 
-  db.get('test1', function (err, val) {
-      callbacks += 1;
-      Assert.deepEqual(val, t1);
-    });
+      db.get('test1', function (err, val) {
+          callbacks += 1;
+          Assert.deepEqual(null, err);
+          Assert.deepEqual(val, t1);
+        });
 
-  db.get('test2', function (err, val) {
-      callbacks += 1;
-      Assert.deepEqual(val, t2);
-    });
+      db.get('test2', function (err, val) {
+          callbacks += 1;
+          Assert.deepEqual(null, err);
+          Assert.deepEqual(val, t2);
+        });
 
-  db.del('test2', function (err) {
-      callbacks += 1;
-    });
+      db.del('test2', function (err) {
+          callbacks += 1;
+          Assert.deepEqual(null, err);
+        });
 
-  db.get('test1', function (err, val) {
-      callbacks += 1;
-      Assert.ok(val);
-    });
+      db.get('test1', function (err, val) {
+          callbacks += 1;
+          Assert.ok(val);
+        });
 
-  db.get('test2', function (err, val) {
-      callbacks += 1;
-      Assert.ok(err);
+      db.get('test2', function (err, val) {
+          callbacks += 1;
+          Assert.deepEqual(null, val);
+          db.quit();
+        });
+
     });
 
   beforeExit(function () {
@@ -65,13 +80,33 @@ exports['test data storage'] = function (beforeExit) {
     });
 };
 
-
-exports['test data filtering'] = function (beforeExit) {
+exports['test all'] = function (beforeExit) {
   var callbacks = 0;
-  var db = Store.createStore({ name: 'testdb' });
+  var db = Store.createStore({ name: 'test2db',  log: log });
+  db.flush(function () {
+      var count = 0;
 
-  db.filter(function (key, value) {
-      return (value.c);
-    }, function (err, data) {
+      Async.forEach(testData, function (entry, cb) {
+          db.put('testNo' + count, entry, cb); 
+          count += 1;
+        }, function (err) {
+          callbacks += 1;
+        });
+
+      db.all(function (err, data) {
+          callbacks += 1;
+          Assert.ok(data);
+
+          Object.keys(data).forEach(function (key) {
+              var index = Number(key.replace('testNo', ''));
+              Assert.deepEqual(data[key], testData[index]);
+            });
+
+          db.quit();
+        });
+    });
+
+  beforeExit(function () {
+      Assert.strictEqual(callbacks, 2);
     });
 };
