@@ -45,9 +45,9 @@ var server = Connect.createServer(
 var context = {
   log: log,
   store: {
-    parts: Store.createStore({ name: 'parts' },
-    carts: Store.createStore({ name: 'carts' },
-    templates: Store.createStore({ name: 'templates' }
+    parts: Store.createStore({ name: 'parts', log: log },
+    carts: Store.createStore({ name: 'carts', log: log },
+    templates: Store.createStore({ name: 'templates', log: log }
   }
 };
 
