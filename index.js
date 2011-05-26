@@ -45,9 +45,9 @@ var server = Connect.createServer(
 var context = {
   log: log,
   store: {
-    parts: Store.createStore({ name: 'parts', log: log },
-    carts: Store.createStore({ name: 'carts', log: log },
-    templates: Store.createStore({ name: 'templates', log: log }
+    parts: Store.createStore({ name: 'parts', log: log }),
+    carts: Store.createStore({ name: 'carts', log: log }),
+    templates: Store.createStore({ name: 'templates', log: log })
   }
 };
 
@@ -64,6 +64,7 @@ var context = {
   }());
 
 Cluster(server)
+.use(Cluster.pidfiles('pid'))
 .use(Cluster.cli())
 .use(Cluster.logger('log'))
 .listen(31337);
