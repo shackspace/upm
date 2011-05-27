@@ -29,12 +29,15 @@ var Uuid = require('node-uuid');
 
 exports.parts = function (context) {
   var store = context.store.parts;
+  var log = context.log;
 
   return Connect(
     Quip(),
     Connect.router(function (app) {
 
         app.get('/', function (req, res) {
+            log.debug('GET /parts');
+
             store.all(function (err, data) {
                 if (err) {
                   res.error().json({ message: err.stack });
@@ -51,6 +54,7 @@ exports.parts = function (context) {
 
 exports.part = function (context) {
   var store = context.store.parts;
+  var log = context.log;
 
   return Connect(
     Quip(),
@@ -58,6 +62,7 @@ exports.part = function (context) {
     Connect.router(function (app) {
 
         app.post('/', function (req, res) {
+            log.debug('POST /part/');
             var uuid = Uuid();
             store.put(uuid, req.body, function (err) {
                 if (err) {
@@ -71,6 +76,7 @@ exports.part = function (context) {
 
         app.get('/:id', function (req, res) {
             var par = req.params;
+            log.debug('GET /part/' + par.id);
             store.get(par.id, function (err, part) {
                 if (part) {
                   res.ok().json(part);
@@ -84,6 +90,7 @@ exports.part = function (context) {
 
         app.del('/:id', function (req, res) {
             var par = req.params;
+            log.debug('DELETE /part/' + par.id);
             store.get(par.id, function (err, part) {
                 if (part) {
                   store.del(par.id, function (err) {
@@ -99,6 +106,7 @@ exports.part = function (context) {
 
         app.get('/:id/:property', function (req, res) {
             var par = req.params;
+            log.debug('GET /part/' + par.id + '/' + par.property);
             var part = store.get(par.id, function (err, part) {
                 if (part) {
                   if (part[par.property]) {
@@ -118,6 +126,7 @@ exports.part = function (context) {
 
         app.put('/:id/:property', function (req, res) {
             var par = req.params;
+            log.debug('PUT /part/' + par.id + '/' + par.property);
             var part = store.get(par.id, function (err, part) {
                 if (part) {
                   part[par.property] = req.body.value;
