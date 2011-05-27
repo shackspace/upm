@@ -21,7 +21,7 @@ log4js.addAppender(log4js.fileAppender(__dirname + '/log/upm.log'));
 log4js.addAppender(log4js.fileAppender(__dirname + '/log/error.log'), errorlog);
 
 var log = log4js.getLogger('upm');
-log.setLevel('ERROR');
+log.setLevel('DEBUG');
 
 /*
  * register error handler for uncaught exceptions
@@ -38,7 +38,6 @@ var requestStream = Fs.createWriteStream(__dirname + '/log/requests.log', {
 var server = Connect.createServer(
   Connect.bodyParser(),
   RequestLogger({ log: log, logStream: requestStream }),
-  log4js.connectLogger(log, { level: log4js.levels.INFO }),
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
 
@@ -63,8 +62,13 @@ var context = {
       }); 
   }());
 
+
+/*
 Cluster(server)
 .use(Cluster.pidfiles('pid'))
 .use(Cluster.cli())
 .use(Cluster.logger('log'))
 .listen(31337);
+*/
+
+server.listen(31337);
