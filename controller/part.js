@@ -82,6 +82,21 @@ exports.part = function (context) {
               });
           });
 
+        app.del('/:id', function (req, res) {
+            var par = req.params;
+            store.get(par.id, function (err, part) {
+                if (part) {
+                  store.del(par.id, function (err) {
+                      res.ok().json({ message: 'ok' });
+                    });
+                } else {
+                  res.notFound().json({
+                      message: 'No part with id ' + par.id + ' was found'
+                    });
+                }
+              });
+          });
+
         app.get('/:id/:property', function (req, res) {
             var par = req.params;
             var part = store.get(par.id, function (err, part) {
@@ -95,7 +110,7 @@ exports.part = function (context) {
                   }
                 } else {
                   res.notFound().json({
-                      message: 'No part with id ' + par.id + 'was found'
+                      message: 'No part with id ' + par.id + ' was found'
                     });
                 }
               });
