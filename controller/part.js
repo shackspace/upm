@@ -35,6 +35,7 @@ exports.parts = function (context) {
     Quip(),
     Connect.router(function (app) {
 
+        // GET /parts/ -> all the parts
         app.get('/', function (req, res) {
             log.debug('GET /parts');
 
@@ -61,6 +62,7 @@ exports.part = function (context) {
     Connect.bodyParser(),
     Connect.router(function (app) {
 
+        // POST /part/ -> create new part
         app.post('/', function (req, res) {
             log.debug('POST /part/');
             var uuid = Uuid();
@@ -74,6 +76,7 @@ exports.part = function (context) {
               });
           });
 
+        // GET /part/id -> retrieve part
         app.get('/:id', function (req, res) {
             var par = req.params;
             log.debug('GET /part/' + par.id);
@@ -88,6 +91,7 @@ exports.part = function (context) {
               });
           });
 
+        // DELETE /part/id -> delete part
         app.del('/:id', function (req, res) {
             var par = req.params;
             log.debug('DELETE /part/' + par.id);
@@ -104,6 +108,7 @@ exports.part = function (context) {
               });
           });
 
+        // GET /part/id/property -> retrieve property of part
         app.get('/:id/:property', function (req, res) {
             var par = req.params;
             log.debug('GET /part/' + par.id + '/' + par.property);
@@ -124,6 +129,7 @@ exports.part = function (context) {
               });
           });
 
+        // PUT /part/id/property -> add/update property of part
         app.put('/:id/:property', function (req, res) {
             var par = req.params;
             log.debug('PUT /part/' + par.id + '/' + par.property);
@@ -138,6 +144,37 @@ exports.part = function (context) {
 
                       res.ok().json({ message: 'ok' });
                     });
+                } else {
+                  res.notFound().json({
+                      message: 'No part with id ' + par.id + 'was found'
+                    });
+                }
+              });
+
+          });
+
+        // DELETE /part/id/property -> delete property of part
+        app.del('/:id/:property', function (req, res) {
+            var par = req.params;
+            log.debug('DELETE /part/' + par.id + '/' + par.property);
+            var part = store.get(par.id, function (err, part) {
+                if (part) {
+                  if (part[par.property]) {
+                    delete part[par.property];
+                    store.put(par.id, part, function (err) {
+                        if (err) {
+                          res.error().json({ message: err.stack });
+                          return;
+                        }
+
+                        res.ok().json({ message: 'ok' });
+                      });
+                  } else {
+                    res.notFound().json({
+                        message: 'Part with id ' + par.id + ' has no attribute ' + par.property
+                      });
+
+                  }
                 } else {
                   res.notFound().json({
                       message: 'No part with id ' + par.id + 'was found'
