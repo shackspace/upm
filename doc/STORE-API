@@ -1,17 +1,22 @@
 
 
-store.getItem(key, callback);
+store.get(key, callback);
 
   callback: function (err, item)
 
 
-store.putItem(key, value, [callback]);
+store.put(key, value, [callback]);
 
   callback: function (err)
 
 
-store.deleteItem(key, [callback]);
+store.del(key, [callback]);
 
   callback: function (err)
+
+
+store.all(callback)
+
+  callback: function (err, all)
 
 
