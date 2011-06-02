@@ -180,7 +180,7 @@ exports['add new properties to part'] = function (done) {
     });
 };
 
-exports['teardown'] = function (done) {
+exports['tear down'] = function (done) {
   context.store.parts.quit();
   done();
 };
