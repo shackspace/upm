@@ -3,12 +3,12 @@ var qs = require('qs')
 var url = require('url')
 
 // dummy data -> get these from the database backend
-var parts = { '00000' : { 'penis' : '20inch', 'balls': 'made of steel' } ,
-          '00001' : { 'penis' : 'tiny', 'balls' :'none' }, 
-          '00002' : { 'vagina' : 'hairy', 'breast' :'fuckin huge!' },
-          '00003' : { 'vagina' : 'shaved', 'breast' :'flat chest' }
-}
-var templates = { "shemale" :{ '00001' : '2000 [stueck]' , '00003' : '>9001 stueck' }, "doublepenisbob" : {"00000" : "2", "00001" : "1"} }
+//var parts = { '00000' : { 'penis' : '20inch', 'balls': 'made of steel' } ,
+//          '00001' : { 'penis' : 'tiny', 'balls' :'none' }, 
+//          '00002' : { 'vagina' : 'hairy', 'breast' :'fuckin huge!' },
+//          '00003' : { 'vagina' : 'shaved', 'breast' :'flat chest' }
+//}
+//var templates = { "shemale" :{ '00001' : '2000 [stueck]' , '00003' : '>9001 stueck' }, "doublepenisbob" : {"00000" : "2", "00001" : "1"} }
 // end of dummy data
 
 var log = {}
@@ -47,7 +47,7 @@ exports.search = function (server) {
               if ('fulltext' in parsedParams)
               {
                 query = parsedParams['fulltext']
-                ret = getAllMatching(all,query)
+                ret = getAllMatching(parts,query)
               }
               res.end(JSON.stringify(ret));
             });
@@ -82,9 +82,9 @@ exports.search = function (server) {
                     log.debug(JSON.stringify(ret))
                   }
                 });
-              }
               res.end(JSON.stringify(ret));
-            });
+              });
+            }
           });
       })
   );
