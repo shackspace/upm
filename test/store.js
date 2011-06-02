@@ -30,50 +30,80 @@ var log = {
 exports['test data storage'] = function (beforeExit) {
   var callbacks = 0;
   var db = Store.createStore({ name: 'testdb',  log: log });
-  db.flush(function () {
 
-      var t1 = { hello: 123, world: 'asaa' };
-      var t2 = { hello: 345, wooooo: 'asassas' };
+  var t1 = { hello: 123, world: 'asaa' };
+  var t2 = { hello: 345, wooooo: 'asassas' };
 
-      db.put('test1', t1, function (err) {
-          callbacks += 1;
-          Assert.deepEqual(null, err);
-        });
+  Async.series([
 
-      db.put('test2', t2, function (err) {
-          callbacks += 1;
-          Assert.deepEqual(null, err);
-        });
+      function flush(callback) {
+        db.flush(function (err) {
+            callback();
+          });
+      },
 
-      db.get('test1', function (err, val) {
-          callbacks += 1;
-          Assert.deepEqual(null, err);
-          Assert.deepEqual(val, t1);
-        });
+      function putTest1(callback) {
+        db.put('test1', t1, function (err) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            callback();
+          });
+      },
 
-      db.get('test2', function (err, val) {
-          callbacks += 1;
-          Assert.deepEqual(null, err);
-          Assert.deepEqual(val, t2);
-        });
+      function putTest2(callback) {
+        db.put('test2', t2, function (err) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            callback();
+          });
+      },
 
-      db.del('test2', function (err) {
-          callbacks += 1;
-          Assert.deepEqual(null, err);
-        });
+      function getTest1(callback) {
+        db.get('test1', function (err, val) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            Assert.deepEqual(val, t1);
+            callback();
+          });
+      },
 
-      db.get('test1', function (err, val) {
-          callbacks += 1;
-          Assert.ok(val);
-        });
+      function getTest2(callback) {
+        db.get('test2', function (err, val) {
+            callbacks += 1;
+            Assert.deepEqual(val, t2);
+            callback();
+          });
+      },
 
-      db.get('test2', function (err, val) {
-          callbacks += 1;
-          Assert.deepEqual(null, val);
-          db.quit();
-        });
+      function delTest2(callback) {
+        db.del('test2', function (err) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            callback();
+          });
+      },
 
-    });
+      function existsTest1(callback) {
+        db.exists('test1', function (err, val) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            Assert.strictEqual(val, true);
+            callback();
+          });
+      },
+
+      function existsTest2(callback) {
+        db.exists('test2', function (err, val) {
+            callbacks += 1;
+            Assert.strictEqual(null, err);
+            Assert.strictEqual(val, false);
+            callback();
+          });
+      }],
+
+    function end() {
+      db.quit();
+    })
 
   beforeExit(function () {
       Assert.strictEqual(callbacks, 7);
