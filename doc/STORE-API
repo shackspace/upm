@@ -1,4 +1,8 @@
 
+store.exists(key, callback);
+
+  callback: function (err, boolean);
+
 
 store.get(key, callback);
 
