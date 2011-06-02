@@ -12,4 +12,4 @@ bugs: test
 test: $(TESTS)
 
 $(TESTS): 
-	$(EXPRESSO) $(.SOURCE)
+	$(EXPRESSO) --serial $(.SOURCE)
