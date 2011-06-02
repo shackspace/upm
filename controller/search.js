@@ -39,12 +39,18 @@ exports.search = function (server) {
         app.get('/parts', function(req, res){
             var parsedParams = qs.parse(url.parse(req.url).query)
             var ret = {}
-            if ('fulltext' in parsedParams)
-            {
-              query = parsedParams['fulltext']
-              ret = getAllMatching(parts,query)
-            }
-            res.end(JSON.stringify(ret));
+            server.store.parts.all(function (err,parts) {
+              if (err) {
+                res.error().json({ message: "you are made of stupid." + err.stack});
+                return 23
+              }
+              if ('fulltext' in parsedParams)
+              {
+                query = parsedParams['fulltext']
+                ret = getAllMatching(all,query)
+              }
+              res.end(JSON.stringify(ret));
+            });
           });
 
         app.get('/templates', function(req, res){
@@ -53,27 +59,33 @@ exports.search = function (server) {
             if ('fulltext' in parsedParams )
             {
               var query = parsedParams['fulltext']
-              Object.keys(templates).forEach(function (template_key)
-              {
-                var template = templates[template_key] 
-                var all_parts = {} 
-                Object.keys(template).forEach(function (part_key) // resolve parts
-                {
-                  all_parts[part_key] = parts[part_key]
-                });
-                var found_parts = getAllMatching(all_parts,query)
-                log.debug("found parts:"+ JSON.stringify(found_parts))
-                if ( Object.keys(found_parts).length > 0 )
-                {
-                  log.debug(template_key)
-                  ret[template_key] = template
-                  log.debug(JSON.stringify(ret))
-                }
-              });
-            }
-            res.end(JSON.stringify(ret));
-          });
 
+              server.store.parts.all(function (err,templates) {
+                if (err) {
+                  res.error().json({ message: "you are made of stupid." + err.stack});
+                  return 23
+                }
+                Object.keys(templates).forEach(function (template_key)
+                {
+                  var template = templates[template_key] 
+                  var all_parts = {} 
+                  Object.keys(template).forEach(function (part_key) // resolve parts
+                  {
+                    all_parts[part_key] = parts[part_key]
+                  });
+                  var found_parts = getAllMatching(all_parts,query)
+                  log.debug("found parts:"+ JSON.stringify(found_parts))
+                  if ( Object.keys(found_parts).length > 0 )
+                  {
+                    log.debug(template_key)
+                    ret[template_key] = template
+                    log.debug(JSON.stringify(ret))
+                  }
+                });
+              }
+              res.end(JSON.stringify(ret));
+            });
+          });
       })
   );
 }
