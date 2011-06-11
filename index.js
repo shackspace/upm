@@ -37,6 +37,7 @@ var requestStream = Fs.createWriteStream(__dirname + '/log/requests.log', {
 
 var server = Connect.createServer(
   Connect.bodyParser(),
+  Connect.static(__dirname + '/public'),
   RequestLogger({ log: log, logStream: requestStream }),
   Connect.errorHandler({showStack: true, dumpExceptions: true})
 );
