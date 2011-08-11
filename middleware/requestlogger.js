@@ -4,7 +4,6 @@
  * @author pfleidi
  */
 
-var Fs = require('fs');
 var Util = require('util');
 
 var defaultLogger = {
