@@ -70,12 +70,11 @@
 
   <input id="input" type="text" />
   <table id="table" border="0">
-    <tr><th>Header</th></tr>
-    <tr><th>Data</th></tr>
   </table>
   <script>
     $(function () {
       $('#input').keypress(rebuild);
+      rebuild();
     });
     function rebuild() {
         setTimeout(function() {
