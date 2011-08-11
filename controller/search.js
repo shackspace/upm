@@ -181,21 +181,25 @@ function getAllMatching( datatypes, query )
 {
   log.debug("Query: "+query)
   var ret = {}
+  var queries = query.split(/ +/g);
   //if (query === '') return ret
-  Object.keys(datatypes).forEach(function (data_key)
-  {
-    var data = datatypes[data_key]
-    Object.keys(data).forEach(function (attr_key)
-    {
-      var attr = data[attr_key]
-      try {
-        var res = attr.search(query);
-      } catch (exn) {
-        res = -1;
-      };
-      if (res != -1)
-      {
-        log.debug (query + " in " +attr + " from " + data_key);
+  Object.keys(datatypes).forEach(function (data_key) {
+    var count = 0;
+    var data = datatypes[data_key];
+    Object.keys(data).forEach(function (attr_key) {
+      var attr = data[attr_key];
+      queries.forEach(function (qpart) {
+        try {
+          var res = attr.search(qpart);
+        } catch (exn) {
+          res = -1;
+        };
+        if (res != -1) {
+          log.debug (qpart+ " in " +attr_key + " from " + data_key);    
+          count ++;
+        }
+      });
+      if (count >= queries.length) {
         ret[data_key] = data
       }
     });
