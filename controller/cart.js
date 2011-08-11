@@ -71,7 +71,17 @@ exports.cart = function (context) {
               });
               res.end('false');
             } else {
-              cart[partId] = req.body;
+              try {
+                var amount = Number(Object.keys(req.body)[0]);
+                if (isNaN(amount))
+                  throw new Error('Your Argument Is Invalid@!!!');
+              } catch (exn) {
+                  res.writeHead(400, 'You are made of stupid', {
+                    'Content-Type': 'application/json'
+                  });
+                  return res.end('false');
+              };
+              cart[partId] = amount
               store.put(cartId, cart, function (err) {
                 if (err) {
                   res.writeHead(500, {
