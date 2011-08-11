@@ -67,6 +67,34 @@
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
-  
+
+  <input id="input" type="text" />
+  <table id="table" border="0">
+    <tr><th>Header</th></tr>
+    <tr><th>Data</th></tr>
+  </table>
+  <script>
+    $(function () {
+      $('#input').keypress(rebuild);
+    });
+    function rebuild() {
+        setTimeout(function() {
+        console.log($('#input').val());
+      $.get("/search/parts?fulltext=" + $('#input').val(), function (data, textStatus, jqXHR) {
+        $('#table').html('');
+        Object.keys(data).forEach(function (key) {
+          var entry = data[key];
+          $('#table').append('<tr><td>' +
+              JSON.stringify(entry)
+              +
+              '</td></tr>');
+          
+        });
+      }, 'json');
+    },0);
+    };
+  </script>
+
+
 </body>
 </html>
