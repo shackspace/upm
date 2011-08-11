@@ -1,15 +1,18 @@
 
 var connect = require('connect');
 var crypto = require('crypto');
+var uuid = require('node-uuid');
 
-exports.cart = function () {
+exports.cart = function (context) {
+  var store = context.store.carts;
+  //var log = context.log;
   return connect(
       connect.router(function (app) {
 
         // create cart
         app.post('/', function(req, res) {
-          var id = gensym();
-          app.store.carts.put(id, {}, function (err) {
+          var id = uuid();
+          store.put(id, {}, function (err) {
             if (err) {
               res.writeHead(500, {
                 'Content-Type': 'application/json'
@@ -27,7 +30,7 @@ exports.cart = function () {
         // retrieve cart
         app.get('/(:id)', function(req, res) {
           var id = req.params.id;
-          app.store.carts.exists(id, function (err, exists) {
+          store.exists(id, function (err, exists) {
             if (err) {
               res.writeHead(500, {
                 'Content-Type': 'application/json'
@@ -35,7 +38,7 @@ exports.cart = function () {
               res.end('false');
             } else {
               if (exists) {
-                app.store.carts.get(id, function (err, item) {
+                store.get(id, function (err, item) {
                   if (err) {
                     res.writeHead(500, {
                       'Content-Type': 'application/json'
@@ -61,7 +64,7 @@ exports.cart = function () {
           var cartId = req.params.cartId;
           var partId = req.params.partId;
           // TODO 404 would be nice
-          app.store.carts.get(cartId, function (err, cart) {
+          store.get(cartId, function (err, cart) {
             if (err) {
               res.writeHead(500, {
                 'Content-Type': 'application/json'
@@ -69,7 +72,7 @@ exports.cart = function () {
               res.end('false');
             } else {
               cart[partId] = req.body;
-              app.store.carts.put(cartId, cart, function (err) {
+              store.put(cartId, cart, function (err) {
                 if (err) {
                   res.writeHead(500, {
                     'Content-Type': 'application/json'
@@ -91,7 +94,7 @@ exports.cart = function () {
           var cartId = req.params.cartId;
           var partId = req.params.partId;
           // TODO 404 would be nice
-          app.store.carts.get(cartId, function (err, cart) {
+          store.get(cartId, function (err, cart) {
             if (err) {
               res.writeHead(500, {
                 'Content-Type': 'application/json'
@@ -99,7 +102,7 @@ exports.cart = function () {
               res.end('false');
             } else {
               delete cart[partId];
-              app.store.carts.put(cartId, cart, function (err) {
+              store.put(cartId, cart, function (err) {
                 if (err) {
                   res.writeHead(500, {
                     'Content-Type': 'application/json'
@@ -120,7 +123,7 @@ exports.cart = function () {
         app.delete('/(:id)', function(req, res) {
           var id = req.params.id;
           // TODO 404 would be nice
-          app.store.carts.del(id, function (err) {
+          store.del(id, function (err) {
             if (err) {
               res.writeHead(500, {
                 'Content-Type': 'application/json'
@@ -136,11 +139,4 @@ exports.cart = function () {
         });
       })
   );
-};
-
-function gensym () {
-  var sha1sum = crypto.createHash('sha1');
-  sha1sum.update((new Date()).toString());
-  var id = sha1sum.digest('hex');
-  return id in carts ? gensym() : id;
 };
