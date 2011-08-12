@@ -6,10 +6,12 @@ var Async = require('async');
 
 var fileName = process.argv[2];
 var data = JSON.parse(Fs.readFileSync(fileName));
-var client = Wwwdude.createClient();
+var client = Wwwdude.createClient({
+    headers: { 'Content-Type': 'application/json' },
+  });
 
 function createPart(part, callback) {
-  console.log('Storing part ' + part);
+  console.log('Storing part ' + JSON.stringify(part));
 
   client.post('http://localhost:31337/part', {
       payload: JSON.stringify(part)
@@ -22,7 +24,7 @@ function createPart(part, callback) {
     });
 }
 
-Async.forEach(Object.keys(data), function (item, cb) {
+Async.forEachSeries(Object.keys(data), function (item, cb) {
     createPart(data[item], cb);
   }, function (err) {
     console.dir(err);
