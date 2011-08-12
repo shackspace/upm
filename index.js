@@ -12,7 +12,7 @@ var Connect = require('connect');
 var RequestLogger = require('./middleware/requestlogger');
 var Store = require('./lib/store');
 
-var log4js = require('log4js')();
+var log4js = require('log4js');
 var errorlog = log4js.getLogger('errorlog');
 
 errorlog.setLevel('ERROR');
