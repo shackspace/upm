@@ -9,10 +9,8 @@
     "quip": ">= 0.0.2",
     "node-uuid": ">= 1.1.0",
     "log4js": ">= 0.2.5",
-    "cluster": ">= 0.6.2",
     "redis": ">= 0.6.0",
-    "hiredis": ">= 0.1.10",
-    "expresso" : ">= 0.7.6"
+    "hiredis": ">= 0.1.10"
   },
   "engines" : { "node": ">= 0.4.0" }
 }
