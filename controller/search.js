@@ -177,31 +177,39 @@ var parts =
 // end of dummy data
 
 var log = {}
-function getAllMatching( datatypes, query )
-{
+function getAllMatching(datatypes, query) {
   log.debug("Query: "+query)
   var ret = {}
   var queries = query.split(/ +/g);
   //if (query === '') return ret
   Object.keys(datatypes).forEach(function (data_key) {
-    var count = 0;
     var data = datatypes[data_key];
+    var query_set = {};
+    queries.forEach(function (key) {
+      if (query_set.hasOwnProperty(key)) {
+        query_set[key]++;
+      } else {
+        query_set[key] = 1;
+      };
+    });
     Object.keys(data).forEach(function (attr_key) {
       var attr = data[attr_key];
-      queries.forEach(function (qpart) {
+      Object.keys(query_set).forEach(function (qpart) {
         try {
           var res = attr.search(qpart);
         } catch (exn) {
           res = -1;
         };
-        if (res != -1) {
-          log.debug (qpart+ " in " +attr_key + " from " + data_key);    
-          count ++;
+        if (res !== -1) {
+          log.debug(qpart + " in " +attr_key + " from " + data_key);
+          if (--query_set[qpart] === 0) {
+            delete query_set[qpart];
+          };
         }
       });
-      if (count >= queries.length) {
-        ret[data_key] = data
-      }
+      if (Object.keys(query_set).length === 0) {
+        ret[data_key] = data;
+      };
     });
   });
   return ret
