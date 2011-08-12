@@ -9,7 +9,6 @@ var CONTROLLER_DIR = __dirname + '/controller';
 var Util = require('util');
 var Fs = require('fs');
 var Connect = require('connect');
-var Cluster = require('cluster');
 var RequestLogger = require('./middleware/requestlogger');
 var Store = require('./lib/store');
 
@@ -62,14 +61,5 @@ var context = {
         }   
       }); 
   }());
-
-
-/*
-Cluster(server)
-.use(Cluster.pidfiles('pid'))
-.use(Cluster.cli())
-.use(Cluster.logger('log'))
-.listen(31337);
-*/
 
 server.listen(31337, '127.0.0.1');
